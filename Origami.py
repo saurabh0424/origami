@@ -11,6 +11,7 @@ import sys
 import numpy as np
 import xml.etree.ElementTree as ET
 from xml.dom import minidom
+from functools import reduce
 
 
 # SETTINGS
@@ -224,7 +225,7 @@ def closePoints(coords1, coords2):
     diff = 4
     def cube(x):
         return x**3
-    return (sum(map(abs, map(cube, map(operator.sub, coords1, coords2)))) <
+    return (sum(map(abs, list(map(cube, list(map(operator.sub, coords1, coords2)))))) <
         diff**3)
 
 def nearestVertex(coords, pattern):
@@ -266,9 +267,9 @@ def prettify(elem):
 def addFacesOnTop(faces, face, unmovedFace, newPattern, pattern, vertex, 
     newCoord, edge, toFront):
     if toFront:
-        ran = range(pattern.faces.index(face))
+        ran = list(range(pattern.faces.index(face)))
     else:
-        ran =  range(pattern.faces.index(face)+1, len(pattern.faces))
+        ran =  list(range(pattern.faces.index(face)+1, len(pattern.faces)))
     for i in ran:
         if (pattern.faces[i] not in faces['originalFace'] and
             facesIntersect(pattern.faces[i], unmovedFace)):
@@ -652,7 +653,7 @@ class Vertex(object):
         for i in range(coords):
             vertexXml.set(originalCoords[i], "%10.5f" % self.originalCoords[i])
         coords = ['x', 'y', 'z']
-        for i in range(coords):
+        for i in range(len(coords)):
             vertexXml.set(coords[i], "%10.5f" % self.coords[i])
         return faceXml
 
@@ -674,7 +675,7 @@ def testCloseEnough():
     assert(not closeEnough(1, 1.001))
 
 def almostSameCoords(coord1, coord2):
-    return reduce(operator.mul, map(closeEnough, coord1, coord2))
+    return reduce(operator.mul, list(map(closeEnough, coord1, coord2)))
 
 def testAlmostSameCoords():
     assert(almostSameCoords((1, 2, 3), (1.00000001, 2.0, 3.000001)))
@@ -849,8 +850,8 @@ class MainLoop(object):
         viewB=self.tb.AddLabelTool(viewID,'View Mode',wx.Bitmap('img/view.png'))
         self.tb.AddSeparator()
         undoB=self.tb.AddLabelTool(undoID,'Undo (u)',wx.Bitmap('img/undo.png'))
-        prevB=self.tb.AddLabelTool(prevID,u'Prev (←)',wx.Bitmap('img/prev.png'))
-        nextB=self.tb.AddLabelTool(nextID,u'Next (→)',wx.Bitmap('img/next.png'))
+        prevB=self.tb.AddLabelTool(prevID,'Prev (←)',wx.Bitmap('img/prev.png'))
+        nextB=self.tb.AddLabelTool(nextID,'Next (→)',wx.Bitmap('img/next.png'))
         flipB=self.tb.AddLabelTool(flipID,'Flip (f)',wx.Bitmap('img/flip.png'))
 
         buttons = [initB,loadB,saveB,editB,viewB,prevB,nextB,undoB,flipB]
@@ -985,7 +986,7 @@ class MainLoop(object):
                 xml = ET.parse(os.path.join(dirName, fileName)).getroot()
                 self.origami = Origami.loadXml(xml)
             except:
-                print "Error: invalid file!"
+                print("Error: invalid file!")
                 self.origami = Origami()
             self.scene.forward = (0,0,-1)
             self.animating = False
