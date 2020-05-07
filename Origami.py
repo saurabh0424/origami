@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # Origami.py by Takumi Fujimoto
 
-from visual import *
+from visual import window, color, vector, scene, frame, faces, curve, cross, rate, pi, rotate
 from copy import *
 import operator
 import wx
@@ -13,12 +13,10 @@ import xml.etree.ElementTree as ET
 from xml.dom import minidom
 from functools import reduce
 
-
 # SETTINGS
 FRONT_COLOR = color.yellow
 BACK_COLOR = color.white
 BACKGROUND_COLOR = color.gray(0.2) # 0 is white, 1 is black
-
 
 
 def vertexOnEdge(edge, coords):

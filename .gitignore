@@ -1,3 +1,10 @@
+.idea/*
+.DS_Store
+
+# temporary recovery files
+~$*
+
+
 *.py[cod]
 
 # C extensions
